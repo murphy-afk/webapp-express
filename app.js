@@ -4,7 +4,7 @@ import router from "./routers/movies.js";
 const app = express();
 const port = process.env.SERVER_PORT;
 
-app.use("/api/books", router);
+app.use("/api/movies", router);
 
 
 app.listen(port, () => {
