@@ -1,11 +1,10 @@
 import express from "express";
+import router from "./routers/movies.js";
 
 const app = express();
 const port = process.env.SERVER_PORT;
 
-app.get("/api/books", (req, res) => {
-  res.send('server works')
-});
+app.use("/api/books", router);
 
 
 app.listen(port, () => {
