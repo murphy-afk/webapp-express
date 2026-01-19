@@ -21,13 +21,7 @@ function show(req, res, next) {
   const query = "SELECT * FROM movies WHERE id = ?";
 
   connection.query(query, [id], (err, result) => {
-    if (err) {
-      res.status(500)
-      return res.json({
-        error: process.env.ENVIRONMENT === "dev" ? err : "INTERNAL ERROR",
-        message: "Internal sever error"
-      })
-    }
+    if (err) return next(err);
     if (result.length === 0) {
       res.status(404);
       return res.json({
@@ -40,13 +34,7 @@ function show(req, res, next) {
     const reviewsQuery = "SELECT * FROM reviews WHERE movie_id = ?"
 
     connection.query(reviewsQuery, [id], (err, reviewResult) => {
-      if (err) {
-        res.status(500)
-        return res.json({
-          error: process.env.ENVIRONMENT === "dev" ? err : "INTERNAL ERROR",
-          message: "Internal sever error"
-        })
-      }
+      if (err) return next(err);
       res.json({
         ...movie,
         reviews: reviewResult
