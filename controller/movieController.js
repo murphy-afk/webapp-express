@@ -36,12 +36,23 @@ function show(req, res, next) {
       });
     }
     const movie = result[0];
-    return res.json({
-      results: movie,
+
+    const reviewsQuery = "SELECT * FROM reviews WHERE movie_id = ?"
+
+    connection.query(reviewsQuery, [id], (err, reviewResult) => {
+      if (err) {
+        res.status(500)
+        return res.json({
+          error: process.env.ENVIRONMENT === "dev" ? err : "INTERNAL ERROR",
+          message: "Internal sever error"
+        })
+      }
+      res.json({
+        ...movie,
+        reviews: reviewResult
+      })
     })
-
   })
-
 }
 
 const movieController = {
