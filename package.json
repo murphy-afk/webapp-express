@@ -4,10 +4,11 @@
   "description": "",
   "license": "ISC",
   "author": "",
-  "type": "modules",
+  "type": "module",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node --env-file=.env app.js",
+    "dev": "node --env-file=.env --watch app.js"
   },
   "dependencies": {
     "express": "^5.2.1",
