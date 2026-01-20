@@ -1,0 +1,1 @@
+UPDATE movies SET image = 'image.jpg' WHERE id = id 
