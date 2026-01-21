@@ -1,17 +1,36 @@
 import connection from "../database/dbConnection.js"
 
 function index(req, res, next) {
+  const page = req.query.page ? parseInt(req.query.page) : 1;
+  const itemsPerPage = 3;
+  const offset = (page - 1) * itemsPerPage;
+
   const query = `
     SELECT movies.*, 
     ROUND(AVG(reviews.vote), 2) AS avg_vote 
     FROM movies 
     LEFT JOIN reviews 
     ON movies.id = reviews.movie_id 
-    GROUP BY movies.id;`;
-  connection.query(query, (err, result) => {
+    GROUP BY movies.id
+    LIMIT ? OFFSET ?;
+    `;
+
+  connection.query(query, [itemsPerPage, offset], (err, result) => {
     if (err) return next(err);
-    return res.json({
-      results: result,
+    const totalQuery = "SELECT COUNT(id) AS total FROM movies";
+    
+    connection.query(totalQuery, (err, totalResult) => {
+      if (err) return next(err);
+      const moviesNumber = totalResult[0].total;
+
+      return res.json({
+        info: {
+          total: moviesNumber,
+          pages: Math.ceil(moviesNumber / itemsPerPage),
+          currentPage: page,
+        },
+        results: result,
+      })
     })
   })
 }
