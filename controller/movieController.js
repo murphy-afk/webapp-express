@@ -1,7 +1,13 @@
 import connection from "../database/dbConnection.js"
 
 function index(req, res, next) {
-  const query = "SELECT * FROM movies"
+  const query = `
+    SELECT movies.*, 
+    ROUND(AVG(reviews.vote), 2) AS avg_vote 
+    FROM movies 
+    LEFT JOIN reviews 
+    ON movies.id = reviews.movie_id 
+    GROUP BY movies.id;`;
   connection.query(query, (err, result) => {
     if (err) return next(err);
     return res.json({
