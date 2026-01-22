@@ -1,4 +1,5 @@
 import connection from "../database/dbConnection.js"
+import slugify from "slugify";
 
 function index(req, res, next) {
   const page = req.query.page ? parseInt(req.query.page) : 1;
@@ -62,9 +63,27 @@ function show(req, res, next) {
   })
 }
 
+function storeReview(req, res, next) {
+  const data = req.body;
+  const movieId = req.params.id;
+
+  const query = 'INSERT INTO reviews (movie_id, name, vote, text) VALUES (?, ?, ?, ?);';
+
+  connection.query(
+    query, [movieId, data.name, data.vote, data.text], (err, result) => {
+      if (err) return next (err);
+      res.status(201).json({
+        message: 'review uploaded',
+      })
+    }
+  )
+
+}
+
 const movieController = {
   index,
-  show
+  show,
+  storeReview
 }
 
 export default movieController
