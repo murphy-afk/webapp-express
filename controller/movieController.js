@@ -19,7 +19,7 @@ function index(req, res, next) {
   connection.query(query, [itemsPerPage, offset], (err, result) => {
     if (err) return next(err);
     const totalQuery = "SELECT COUNT(id) AS total FROM movies";
-    
+
     connection.query(totalQuery, (err, totalResult) => {
       if (err) return next(err);
       const moviesNumber = totalResult[0].total;
@@ -63,6 +63,27 @@ function show(req, res, next) {
   })
 }
 
+function storeMovie(req, res, next) {
+  const { title, director, abstract } = req.body;
+  const fileName = req.file?.filename || null;
+
+  const sql =
+    "INSERT INTO movies (title, director, abstract, image) VALUES  (?, ?, ?, ?)";
+
+  connection.query(
+    sql, [title, director, abstract, fileName], (err, result) => {
+      if (err) return next(err);
+      res.status(201);
+      return res.json({
+        message: "Movie was created successfully",
+        bookId: result.insertId,
+      });
+    },
+  );
+}
+
+
+
 function storeReview(req, res, next) {
   const data = req.body;
   const movieId = req.params.id;
@@ -71,7 +92,7 @@ function storeReview(req, res, next) {
 
   connection.query(
     query, [movieId, data.name, data.vote, data.text], (err, result) => {
-      if (err) return next (err);
+      if (err) return next(err);
       res.status(201).json({
         message: 'review uploaded',
       })
@@ -83,6 +104,7 @@ function storeReview(req, res, next) {
 const movieController = {
   index,
   show,
+  storeMovie,
   storeReview
 }
 
